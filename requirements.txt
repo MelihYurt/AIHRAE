@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pdfplumber
+google-generativeai
+python-dotenv
+gspread
+google-auth
+requests

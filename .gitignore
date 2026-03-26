@@ -1,0 +1,20 @@
+# Çevre Değişkenleri ve Sırlar (Asla Gitleme!)
+.env
+credentials.json
+
+# Sanal Ortam (Çok Yer Kaplar)
+.venv/
+venv/
+env/
+
+# Veri Dosyaları ve Geçici Dosyalar
+candidates.csv
+temp_*.pdf
+
+# Python Önbellekleri
+__pycache__/
+*.pyc
+
+# IDE Dosyaları
+.vscode/
+.idea/
