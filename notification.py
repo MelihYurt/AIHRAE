@@ -18,7 +18,7 @@ def send_slack_notification(candidate_data: dict, summary: str):
     except ValueError:
         score = 0
         
-    if score >= 90:
+    if score >= 80:
         name = candidate_data.get("name", "Bilinmiyor")
         surname = candidate_data.get("surname", "")
         school = candidate_data.get("school", "")

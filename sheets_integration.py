@@ -43,6 +43,7 @@ def save_to_sheets_mock(candidate_data: dict, extracted_text: str):
             candidate_data.get("contact", ""),
             str(candidate_data.get("experience", "")),
             candidate_data.get("skills", ""),
+            candidate_data.get("seniority", ""),
             candidate_data.get("technical_score", 0),
             candidate_data.get("status", "")
         ]
@@ -50,7 +51,7 @@ def save_to_sheets_mock(candidate_data: dict, extracted_text: str):
         if sheet:
             # Check if headers exist
             headers = sheet.row_values(1)
-            expected_headers = ["Ad", "Soyad", "Okul", "İletişim", "Deneyim", "Beceriler", "Teknik Puan", "Durum"]
+            expected_headers = ["Ad", "Soyad", "Okul", "İletişim", "Deneyim", "Beceriler", "Seniority", "Teknik Puan", "Durum"]
             if not headers or headers[0] != "Ad":
                 sheet.insert_row(expected_headers, index=1)
                 
@@ -61,7 +62,7 @@ def save_to_sheets_mock(candidate_data: dict, extracted_text: str):
             with open(CSV_FILE, mode='a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 if not file_exists:
-                    writer.writerow(["Ad", "Soyad", "Okul", "İletişim", "Deneyim", "Beceriler", "Teknik Puan", "Durum"])
+                    writer.writerow(["Ad", "Soyad", "Okul", "İletişim", "Deneyim", "Beceriler", "Seniority", "Teknik Puan", "Durum"])
                 writer.writerow(row)
                 
         return True

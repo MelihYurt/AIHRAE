@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
@@ -25,6 +25,14 @@ async def get_index():
     # A simple way to serve the static HTML file
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
+
+@app.get("/music1.mp3")
+async def get_music1():
+    return FileResponse("Sean Paul - Got 2 Luv U.mp3", media_type="audio/mpeg")
+
+@app.get("/music2.mp3")
+async def get_music2():
+    return FileResponse("TAK TAK TAK_320k.mp3", media_type="audio/mpeg")
 
 @app.post("/upload")
 async def upload_cv(file: UploadFile = File(...)):
@@ -96,6 +104,7 @@ async def get_best_candidate():
                 f"- 🎓 **Okul:** {best_candidate.get('Okul', '')}\n"
                 f"- 💼 **Deneyim:** {best_candidate.get('Deneyim', '')} Yıl\n"
                 f"- 💡 **Beceriler:** {best_candidate.get('Beceriler', '')}\n"
+                f"- 🏅 **Kıdem (Seniority):** {best_candidate.get('Seniority', '')}\n"
                 f"- 📞 **İletişim:** {best_candidate.get('İletişim', '')}\n"
                 f"- 📌 **Durum:** {best_candidate.get('Durum', '')}"
             )
