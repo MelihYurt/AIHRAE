@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,12 +29,12 @@
             align-items: center;
             min-height: 100vh;
             background-image: radial-gradient(circle at top right, #312E81 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, #1E1B4B 0%, transparent 40%);
+                radial-gradient(circle at bottom left, #1E1B4B 0%, transparent 40%);
         }
 
         .container {
             width: 90%;
-            max-width: 800px;
+            max-width: 1300px;
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(16px);
             border-radius: 24px;
@@ -70,7 +71,8 @@
             position: relative;
         }
 
-        .upload-area:hover, .upload-area.dragover {
+        .upload-area:hover,
+        .upload-area.dragover {
             border-color: var(--primary-light);
             background: rgba(79, 70, 229, 0.1);
             transform: translateY(-2px);
@@ -111,8 +113,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card {
@@ -121,6 +130,43 @@
             padding: 24px;
             margin-bottom: 16px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .result-grid {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .right-column {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .left-column > .card:last-child {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .right-column > .card {
+            flex: 1;
+            margin-bottom: 0;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .result-grid {
+                flex-direction: column;
+            }
         }
 
         .card h3 {
@@ -154,8 +200,18 @@
             display: inline-block;
             margin-left: 10px;
         }
-        .status.uygun { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); color: var(--success); }
-        .status.uygun-degil { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--error); color: var(--error); }
+
+        .status.uygun {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .status.uygun-degil {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
 
         .flex-header {
             display: flex;
@@ -183,12 +239,15 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-
     </style>
 </head>
-<body>    <div class="container">
+
+<body>
+    <div class="container">
         <h1>AI HR Aday Eleme</h1>
         <p class="subtitle">Sanal İş Akışı Trigger'ı: Lütfen adayın CV'sini PDF formatında yükleyin.</p>
 
@@ -202,7 +261,8 @@
         </form>
 
         <div style="text-align: center; margin-top: 20px;">
-            <button id="btn-best" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4); transition: transform 0.2s;">
+            <button id="btn-best"
+                style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4); transition: transform 0.2s;">
                 🌟 Google Sheets'ten En Uygun Adayı Bul
             </button>
         </div>
@@ -210,26 +270,38 @@
         <div class="loader" id="loader"></div>
 
         <div id="result-container">
-            <div class="card flex-header">
-                <div>
-                    <h2 id="r-name" style="margin: 0; font-size: 1.5rem;">Aday İsmi</h2>
-                    <div style="margin-top: 8px;">
-                        <span id="r-status" class="status">Durum</span>
+            <div class="result-grid">
+                <div class="left-column">
+                    <div class="card flex-header">
+                        <div>
+                            <h2 id="r-name" style="margin: 0; font-size: 1.5rem;">Aday İsmi</h2>
+                            <div style="margin-top: 8px;">
+                                <span id="r-status" class="status">Durum</span>
+                            </div>
+                        </div>
+                        <div class="score-badge" id="r-score">90</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>✨ AI Değerlendirme Notları</h3>
+                        <div class="ai-summary" id="r-summary">Özet buraya gelecek...</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔍 Ayıklanan Metin (Önizleme)</h3>
+                        <div style="font-size: 0.9rem; color: var(--text-muted); font-family: monospace; white-space: pre-wrap;"
+                            id="r-text">...</div>
                     </div>
                 </div>
-                <div class="score-badge" id="r-score">90</div>
+
+                <div class="right-column">
+                    <div class="card">
+                        <h3>✉️ Adaya Gönderilen E-posta</h3>
+                        <div class="ai-summary" style="font-size: 0.95rem; color: var(--text-main);" id="r-email">E-posta metni buraya gelecek...</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>✨ AI Değerlendirme Özeti</h3>
-                <div class="ai-summary" id="r-summary">Özet buraya gelecek...</div>
-            </div>
-            
-            <div class="card">
-                <h3>🔍 Ayıklanan Metin (Önizleme)</h3>
-                <div style="font-size: 0.9rem; color: var(--text-muted); font-family: monospace; white-space: pre-wrap;" id="r-text">...</div>
-            </div>
-            
             <p style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 20px;">
                 * Veriler Mock Google Sheets'e (candidates.csv) kaydedildi.
             </p>
@@ -248,7 +320,7 @@
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
 
-        function preventDefaults (e) {
+        function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -296,9 +368,9 @@
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.error) {
                     alert("Hata: " + data.error);
                 } else {
@@ -314,14 +386,15 @@
         function displayResults(data) {
             document.getElementById('r-name').textContent = data.candidate.name;
             document.getElementById('r-score').textContent = data.candidate.technical_score;
-            
+
             const statusEl = document.getElementById('r-status');
             statusEl.textContent = data.candidate.status;
-            statusEl.className = 'status ' + (data.candidate.status === 'Uygun' ? 'uygun' : 'uygun-degil');
-            
+            statusEl.className = 'status ' + (data.candidate.status === 'Interview' || data.candidate.status === 'Uygun' ? 'uygun' : 'uygun-degil');
+
             document.getElementById('r-summary').textContent = data.ai_summary;
+            document.getElementById('r-email').textContent = data.candidate_email || "E-posta oluşturulamadı.";
             document.getElementById('r-text').textContent = data.extracted_text_preview;
-            
+
             resultContainer.style.display = 'block';
         }
 
@@ -332,11 +405,11 @@
             btn.disabled = true;
             resultContainer.style.display = 'none';
             loader.style.display = 'block';
-            
+
             try {
                 const res = await fetch('/best-candidate');
                 const data = await res.json();
-                if(data.error) {
+                if (data.error) {
                     alert("Hata: " + data.error);
                 } else {
                     document.getElementById('r-name').textContent = "Google Sheets Değerlendirmesi";
@@ -347,7 +420,7 @@
                     document.getElementById('r-text').textContent = "Tüm adaylar veritabanından çekildi ve incelendi.";
                     resultContainer.style.display = 'block';
                 }
-            } catch(e) {
+            } catch (e) {
                 alert(e);
             } finally {
                 btn.innerHTML = originalText;
@@ -357,4 +430,5 @@
         });
     </script>
 </body>
+
 </html>

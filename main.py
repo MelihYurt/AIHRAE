@@ -7,8 +7,8 @@ import os
 from pdf_parser import extract_text_from_pdf
 from processor import process_candidate_text
 from sheets_integration import save_to_sheets_mock
-from ai_completion import generate_professional_summary
-from notification import send_slack_notification
+from ai_completion import generate_professional_summary, generate_tailored_email
+from notification import send_slack_notification, send_candidate_email
 
 app = FastAPI(title="AI HR System")
 
@@ -56,14 +56,19 @@ async def upload_cv(file: UploadFile = File(...)):
         # 4. AI Completion (Gemini)
         ai_summary = generate_professional_summary(extracted_text, candidate_data)
         
-        # 5. Conditional Slack Webhook (Score >= 90)
+        # 5. Conditional Slack Webhook (Score >= 90) # (or 80 as updated in notification.py)
         send_slack_notification(candidate_data, ai_summary)
+        
+        # 6. Tailored Candidate Email
+        candidate_email_content = generate_tailored_email(candidate_data)
+        send_candidate_email(candidate_data, candidate_email_content)
         
         return {
             "success": True,
             "filename": file.filename,
             "candidate": candidate_data,
             "ai_summary": ai_summary,
+            "candidate_email": candidate_email_content,
             "extracted_text_preview": extracted_text[:200] + "..." if extracted_text else "Metin bulunamadı."
         }
         

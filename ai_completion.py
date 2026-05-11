@@ -45,3 +45,49 @@ def generate_professional_summary(text: str, candidate_data: dict) -> str:
         return response.text
     except Exception as e:
         return f"AI Hatası: {str(e)}"
+
+def generate_tailored_email(candidate_data: dict) -> str:
+    """
+    Calls Google Gemini API to generate a tailored email for the candidate.
+    """
+    score = candidate_data.get("technical_score", 0)
+    name = candidate_data.get("name", "Aday")
+    surname = candidate_data.get("surname", "")
+    school = candidate_data.get("school", "")
+    skills = candidate_data.get("skills", "")
+    status = candidate_data.get("status", "Reject")
+    
+    if not API_KEY or API_KEY == "your_gemini_api_key_here":
+        if status == "Interview" or score >= 80:
+            return f"Sayın {name} {surname},\n\nŞirketimize yaptığınız başvuru için teşekkür ederiz. Profiliniz olumlu değerlendirilmiştir. En kısa sürede sizinle mülakat planlaması için iletişime geçeceğiz.\n\nİyi günler dileriz."
+        else:
+            return f"Sayın {name} {surname},\n\nŞirketimize yaptığınız başvuru için teşekkür ederiz. Profiliniz şu anki açık pozisyonlarımızla tam olarak eşleşmemiştir. Özgeçmişinizi gelecekteki fırsatlar için veritabanımızda saklayacağız.\n\nİyi günler dileriz."
+            
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        if status == "Interview" or score >= 80:
+            prompt = f"""
+            Sen bir İnsan Kaynakları uzmanısın. Aşağıdaki adaya bir İK mülakatı daveti e-postası yaz. 
+            Şirket adı olarak "TechNova Solutions" kullan. Pozisyon adı olarak "Full Stack Developer" kullan.
+            E-postada kesinlikle köşeli parantezli boşluklar (örn: [Şirket Adı], [Tarih], vb.) bırakma, hayali mantıklı detaylar ekle.
+            E-posta profesyonel, samimi ve motive edici olmalı. Adayın okulundan ({school}) veya yeteneklerinden ({skills}) kısa ve nazikçe bahsederek e-postayı özelleştir.
+            Sadece e-posta metnini yaz (konu başlığı hariç).
+
+            Adayın Adı Soyadı: {name} {surname}
+            """
+        else:
+            prompt = f"""
+            Sen bir İnsan Kaynakları uzmanısın. Aşağıdaki adaya nazik, yapıcı ve profesyonel bir ret (olumsuz sonuç) e-postası yaz. 
+            Şirket adı olarak "TechNova Solutions" kullan. Pozisyon adı olarak "Full Stack Developer" kullan.
+            E-postada kesinlikle köşeli parantezli boşluklar (örn: [Şirket Adı]) bırakma, direkt bu bilgileri kullan.
+            Adayın zaman ayırıp başvurduğu için teşekkür et ve yeteneklerinin ({skills}) değerli olduğunu ancak şu anki pozisyonla eşleşmediğini belirt.
+            Sadece e-posta metnini yaz (konu başlığı hariç).
+
+            Adayın Adı Soyadı: {name} {surname}
+            """
+            
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        return f"Sayın {name},\nSistemde oluşan bir hatadan dolayı e-postanız otomatik oluşturulamadı. Lütfen İK ile iletişime geçiniz."
